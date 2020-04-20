@@ -7,6 +7,7 @@ Responsibilities:
 	- Hold Pharmacies
 	- Set a Patient's trusted Doctor
 	- Show Profiles by name Identity
+	- Give MedicalInfo to Universities anonymously 
 Collaborators:
 	- Profile
 	- University
@@ -22,6 +23,7 @@ Responsibilities:
 	- Hold trusted Doctors
 	- Get MedicalInfo
 	- Get MedicalBackground
+	- give permission to use MedicalInfo and MedicalBackground
 Collaborators:
 	- MedicalInfo
 	- MedicalBackground
@@ -33,7 +35,7 @@ Collaborators:
 
 ClassName: University
 Responsibilities:
-	- Get the MedicalInfo of a Patient anonymously
+	- take the MedicalInfo of Patients(anonymously)
 Collaborators:
 	- MedicalInfo
 	- Profile
@@ -87,7 +89,7 @@ Responsibilities:
 	- Hold Identity
 	- Get patients medical info(if allowed)
 	- Add trusted Doctor to a profile
-	- Add to a patient's MedicalBackground
+	- Modify a patient's MedicalBackground
 Collaborators:
 	- Profile
 	- 
@@ -111,6 +113,7 @@ ClassName: Pharmacy
 Responsibilities:
 	- Take Prescription
 	- Take MedicalInfo of a patient
+	- Get the related drugs for each Disease
 Collaborators:
 	- Prescription
 	- MedicalInfo

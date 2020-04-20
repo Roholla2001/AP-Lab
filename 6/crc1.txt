@@ -1,10 +1,11 @@
 ClassName: ReservationSystem
 Responsibilities:
-	- Find shows by name or date
+	- Find shows by name or date Theatre
 	- Show details of a show
 	- Make a reservation
 	- Find Reservations by customer or date or show
 	- Add arranged shows in certain days and hours
+	- Add a new Theatre
 Collaborators:
 	- Reservation
 	- Customer
