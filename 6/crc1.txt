@@ -1,0 +1,85 @@
+ClassName: ReservationSystem
+Responsibilities:
+	- Find shows by name or date
+	- Show details of a show
+	- Make a reservation
+	- Find Reservations by customer or date or show
+	- Add arranged shows in certain days and hours
+Collaborators:
+	- Reservation
+	- Customer
+	- Show
+	- Collection
+	- Date
+
+--------------------------------------
+
+ClassName: Show
+Responsibilities:
+	- Show details
+	- Reserve seats
+	- Hold theatre
+Collaborators:
+	- Theatre
+	- Reservation
+
+--------------------------------------
+
+ClassName: Theatre
+Responsibilities:
+	- Hold capacity
+	- Take Reservations
+	- Hold Rows
+	- Find n adjecent seats
+Collaborators:
+	- Row
+	- Collection
+	- Reservations
+
+--------------------------------------
+
+ClassName: Row
+Responsibilities:
+	- Take Reservations
+	- Hold Seats
+	- Get Seats by index
+	- Get adjecent seats
+Collaborators:
+	- Reservations
+	- Seat
+	- Collection
+
+--------------------------------------
+
+ClassName: Seat
+Responsibilities:
+	- Hold state(reserved or not)
+	- Take Reservation
+Collaborators:
+	- Reservation
+
+--------------------------------------
+
+ClassName: Reservation
+Responsibilities:
+	- Hold customer
+	- Hold show
+	- Hold seats
+	- Cancel
+Collaborators:
+	- Customer
+	- Seat
+	- Show
+	- Collection
+
+--------------------------------------
+
+ClassName: Customer
+Responsibilities:
+	- Hold name
+Collaborators:
+	- Reservation
+	- ReservationSystem
+
+
+

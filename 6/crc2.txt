@@ -1,0 +1,127 @@
+--------------------------------------
+
+ClassName: HealthSystem
+Responsibilities:
+	- Hold Profiles
+	- Hold Universities
+	- Hold Pharmacies
+	- Set a Patient's trusted Doctor
+	- Show Profiles by name Identity
+Collaborators:
+	- Profile
+	- University
+	- Pharmacy
+	- Collection
+	- Identity
+
+--------------------------------------
+
+ClassName: Profile
+Responsibilities:
+	- Hold Patient
+	- Hold trusted Doctors
+	- Get MedicalInfo
+	- Get MedicalBackground
+Collaborators:
+	- MedicalInfo
+	- MedicalBackground
+	- Doctor
+	- Patient
+	- Collection
+
+--------------------------------------
+
+ClassName: University
+Responsibilities:
+	- Get the MedicalInfo of a Patient anonymously
+Collaborators:
+	- MedicalInfo
+	- Profile
+
+--------------------------------------
+
+ClassName: Patient
+Responsibilities:
+	- Hold Identity
+	- Hold current Disease
+	- Ongoing drugs
+Collaborators:
+	- Identity
+	- Disease
+
+--------------------------------------
+
+ClassName: MedicalBackground
+Responsibilities:
+	- Hold Diseases
+	- Hold Doctor's notes
+	- Hold used drugs
+Collaborators:
+	- Disease
+	- Doctor
+	- Collection
+
+--------------------------------------
+
+ClassName: MedicalInfo
+Responsibilities:
+	- Hold age, sex, weight, height,...
+Collaborators:
+	- 
+
+
+--------------------------------------
+
+ClassName: Disease
+Responsibilities:
+	- Hold name
+	- Hold general type
+	- Hold seciurity level
+Collaborators:
+	- 
+
+--------------------------------------
+
+ClassName: Doctor
+Responsibilities:
+	- Hold Identity
+	- Get patients medical info(if allowed)
+	- Add trusted Doctor to a profile
+	- Add to a patient's MedicalBackground
+Collaborators:
+	- Profile
+	- 
+
+
+
+--------------------------------------
+
+ClassName: Identity
+Responsibilities:
+	- Hold name, gender, birth date, Educational degree,
+		job, insurance type, location
+Collaborators:
+	- Date
+	- Several enums
+
+
+--------------------------------------
+
+ClassName: Pharmacy
+Responsibilities:
+	- Take Prescription
+	- Take MedicalInfo of a patient
+Collaborators:
+	- Prescription
+	- MedicalInfo
+--------------------------------------
+
+ClassName: Prescription
+Responsibilities:
+	- Hold drugs
+	- Hold Doctor
+Collaborators:
+	- Collection
+
+
+
