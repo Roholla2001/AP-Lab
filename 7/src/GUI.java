@@ -1,9 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Graphical User Interface for basic and advanced calculator
+ */
 public class GUI {
     JFrame frame;
 
+    /**
+     * Construct a new GUI and draw everything
+     */
     public GUI() {
         frame = new JFrame();
         frame.setTitle("Calculator");
@@ -15,6 +21,9 @@ public class GUI {
         frame.setVisible(true);
     }
 
+    /**
+     * Draw the screen and both of the calculators
+     */
     public void draw() {
         screen();
         JPanel basic, advanced;
@@ -27,6 +36,9 @@ public class GUI {
         frame.add(tabbedPane);
     }
 
+    /**
+     * Create a screen and add it to frame
+     */
     public void screen() {
         JTextArea screen = new JTextArea();
         screen.setEditable(false);
@@ -39,6 +51,10 @@ public class GUI {
         frame.add(scroll);
     }
 
+    /**
+     * get a basic calculator
+     * @return a basic calculator
+     */
     public JPanel basic() {
         JPanel panel = new JPanel();
         panel.setSize(200, 200);
@@ -64,6 +80,10 @@ public class GUI {
     }
 
 
+    /**
+     * Get an advanced calculator
+     * @return an advanced calculator
+     */
     public JPanel advanced() {
         JPanel panel = new JPanel();
         panel.setSize(300, 200);
@@ -88,7 +108,7 @@ public class GUI {
         buttons[2][4] = new Button("exp");
         buttons[3][4] = new Button("log");
         buttons[4][4] = new Button("Π");
-        buttons[3][4] = new Button("e");
+        buttons[4][3] = new Button("e");
 
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; j++)
