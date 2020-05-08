@@ -46,18 +46,16 @@ public class Calculator extends JFrame {
     }
 
     public void setListener(ActionListener actionListener, KeyListener keyListener) {
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < 10; i++)
             digitButts[i].addActionListener(actionListener);
-            digitButts[i].addKeyListener(keyListener);
-        }
-        for (int i = 0; i < Operator.values().length; i++) {
+
+        for (int i = 0; i < Operator.values().length; i++)
             operatorButts[i].addActionListener(actionListener);
-            operatorButts[i].addKeyListener(keyListener);
-        }
+
         equal.addActionListener(actionListener);
-        equal.addKeyListener(keyListener);
         shift.addActionListener(actionListener);
-        shift.addKeyListener(keyListener);
+
+        addKeyListener(keyListener);
     }
 
 
@@ -101,7 +99,7 @@ public class Calculator extends JFrame {
      */
     public void makeOperatorButtons() {
         JPanel basic = new JPanel(new GridLayout(5, 1));
-        JPanel advanced = new JPanel(new GridLayout(15, 1));
+        JPanel advanced = new JPanel(new GridLayout(10, 1));
 
         operatorButts = new JButton[15];
 
@@ -109,7 +107,8 @@ public class Calculator extends JFrame {
             operatorButts[i] = new JButton(Operator.values()[i].toString());
             if(i < 5)
                 basic.add(operatorButts[i]);
-//            advanced.add(operatorButts[i]);
+            else
+                advanced.add(operatorButts[i]);
         }
 
 
@@ -117,8 +116,8 @@ public class Calculator extends JFrame {
         advanced.add(shift);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Basic", basic);
-        tabbedPane.addTab("Advanced", advanced);
+        tabbedPane.add("Basic", basic);
+        tabbedPane.add("Advanced", advanced);
 
         add(tabbedPane, BorderLayout.EAST);
 
@@ -159,6 +158,10 @@ public class Calculator extends JFrame {
          * Apply the operation on the entered numbers
          */
         public void setResult() {
+            if(operator == null) {
+                result = first;
+                return;
+            }
             switch(operator) {
                 case ADD:
                     result = first + second;
@@ -174,6 +177,18 @@ public class Calculator extends JFrame {
                     break;
                 case MOD:
                     result = first % second;
+                    break;
+                case SIN:
+                    result = Math.sin(first);
+                    break;
+                case COS:
+                    result = Math.cos(first);
+                    break;
+                case TAN:
+                    result = Math.tan(first);
+                    break;
+                case COT:
+                    result = 1 / Math.tan(first);
                     break;
             }
         }
@@ -202,6 +217,8 @@ public class Calculator extends JFrame {
         }
 
         public void setOperator(Operator operator) {
+            if(operator.isSingleInput())
+                getResult();
             this.operator = operator;
             second = 0;
         }
@@ -217,34 +234,49 @@ public class Calculator extends JFrame {
 
     private class Listener implements ActionListener, KeyListener {
 
+        public void digit(int i) {
+            if(model.hasOperator()) {
+                model.appendSecond(i);
+                screen.setText(model.getFirst() + model.getOperator().toString() + model.getSecond());
+            }
+            else {
+                model.appendFirst(i);
+                screen.setText(model.getFirst() + "");
+            }
+        }
+
+        public void equal() {
+            screen.setText(model.getResult() + "");
+        }
+
+        public void operator(int i) {
+            Operator op = Operator.values()[i];
+            model.setOperator(op);
+            if(op.isSingleInput())
+                screen.setText(model.getFirst() + "");
+            else
+                screen.setText(model.getFirst() + op.toString());
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton butt = (JButton)e.getSource();
 
             if(butt.equals(equal)) {
-                screen.setText(model.getResult() + "");
+                equal();
                 return;
             }
 
             for(int i = 0; i < 10; i++) {
                 if(butt.equals(digitButts[i])) {
-                    if(model.hasOperator()) {
-                        model.appendSecond(i);
-                        screen.setText(model.getFirst() + model.getOperator().toString() + model.getSecond());
-                    }
-                    else {
-                        model.appendFirst(i);
-                        screen.setText(model.getFirst() + "");
-                    }
+                    digit(i);
                     return;
                 }
             }
 
             for(int i = 0; i < Operator.values().length; i++) {
                 if (butt.equals(operatorButts[i])) {
-                    Operator op = Operator.values()[i];
-                    model.setOperator(op);
-                    screen.setText(model.getFirst() + op.toString());
+                    operator(i);
                     return;
                 }
             }
@@ -257,6 +289,30 @@ public class Calculator extends JFrame {
 
         @Override
         public void keyPressed(KeyEvent e) {
+            int code = e.getKeyCode();
+            String text = String.format(" %c ", e.getKeyChar());
+
+            System.out.println(code + "," + text);
+
+            if(code == KeyEvent.VK_EQUALS && text.equals(" = ")) {
+                equal();
+                return;
+            }
+
+            for(int i = 0; i < 10; i++) {
+                if(code == KeyEvent.VK_0 + i && text.equals(" " + i + " ")) {
+                    digit(i);
+                    return;
+                }
+            }
+
+            for(int i = 0; i < Operator.values().length; i++) {
+                Operator op = Operator.values()[i];
+                if (code == op.toKeyCode() && text.equals(op.toString())) {
+                    operator(i);
+                    return;
+                }
+            }
 
         }
 
