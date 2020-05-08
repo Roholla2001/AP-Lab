@@ -1,44 +1,24 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.math.*;
 
 /**
  * A calculator GUI that can be used with both its keypad and the keyboard
  */
 public class Calculator extends JFrame {
+
     private JTextArea screen;
-    private JPanel basic;
-    private JPanel advanced;
 
-    private double first, second;
-    private double result;
-    private Operator operator;
-
-    private JButton[][] buttons;
-
-    private JButton plus;
-    private JButton minus;
-    private JButton multiply;
-    private JButton divide;
-    private JButton mod;
-
-    private JButton sinCos;
-    private JButton tanCot;
-    private JButton exp;
-    private JButton log;
-    private JButton pi;
-    private JButton e;
-    private JButton shift;
-
-    private boolean isShiftOn;
-
+    private JButton[] digitButts;
+    private JButton[] operatorButts;
 
     private JButton equal;
+    private JButton shift;
+
+    private Model model;
+
 
     /**
      * Construct and build new Calculator
@@ -49,71 +29,40 @@ public class Calculator extends JFrame {
         setLayout(new BorderLayout());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        makeDigitButtons();
-        makeOperatorButtons();
-        makeBasic();
-//        makeAdvanced();
-        makeScreen();
-        makeTabbedPane();
+        build();
 
-        
+        Listener listener = new Listener();
+        setListener(listener, listener);
+
         setFocusable(true);
         setVisible(true);
     }
 
-    /**
-     * Make a basic calculator
-     */
-    public void makeBasic() {
-        basic = new JPanel(new GridLayout(4, 4));
-
-        buttons[0][3] = plus;
-        buttons[1][3] = minus;
-        buttons[2][3] = multiply;
-        buttons[3][0] = equal;
-        buttons[3][2] = mod;
-        buttons[3][3] = divide;
-
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++)
-                basic.add(buttons[i][j]);
-
-
-
+    public void build() {
+        model = new Model();
+        makeScreen();
+        makeDigitButtons();
+        makeOperatorButtons();
     }
 
-    /**
-     * Make an advanced calculator
-     */
-    public void makeAdvanced() {
-        advanced = new JPanel(new GridLayout(5, 5));
-
-        buttons[0][3] = plus;
-        buttons[1][3] = minus;
-        buttons[2][3] = multiply;
-        buttons[3][0] = equal;
-        buttons[3][2] = mod;
-        buttons[3][3] = divide;
-
-        buttons[0][4] = sinCos;
-        buttons[1][4] = tanCot;
-        buttons[2][4] = exp;
-        buttons[3][4] = log;
-        buttons[4][4] = pi;
-        buttons[4][3] = e;
-        buttons[4][2] = shift;
-        buttons[4][0] = new JButton("");
-        buttons[4][1] = new JButton("");
-
-        for (int i = 0; i < 5; i++)
-            for (int j = 0; j < 5; j++)
-                advanced.add(buttons[i][j]);
-
-
+    public void setListener(ActionListener actionListener, KeyListener keyListener) {
+        for(int i = 0; i < 10; i++) {
+            digitButts[i].addActionListener(actionListener);
+            digitButts[i].addKeyListener(keyListener);
+        }
+        for (int i = 0; i < Operator.values().length; i++) {
+            operatorButts[i].addActionListener(actionListener);
+            operatorButts[i].addKeyListener(keyListener);
+        }
+        equal.addActionListener(actionListener);
+        equal.addKeyListener(keyListener);
+        shift.addActionListener(actionListener);
+        shift.addKeyListener(keyListener);
     }
 
+
     /**
-     * Make the
+     * Make the screen
      */
     public void makeScreen() {
         screen = new JTextArea();
@@ -132,111 +81,52 @@ public class Calculator extends JFrame {
      * Creat the buttons with digits
      */
     public void makeDigitButtons() {
-        buttons = new JButton[6][6];
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 3; j++) {
-                int digit = 3 * i + j + 1;
-                JButton butt = new JButton("" + digit);
-                butt.addActionListener(digitListener(digit));
-                buttons[i][j] = butt;
-            }
+        digitButts = new JButton[10];
 
-        int digit = 0;
-        JButton butt = new JButton("" + digit);
-        butt.addActionListener(digitListener(digit));
-        buttons[3][1] = butt;
+        JPanel digitsPanel = new JPanel(new GridLayout(4, 3));
+
+        for (int i = 0; i < 10; i++) {
+            digitButts[i] = new JButton(i + "");
+            if(i > 0)
+                digitsPanel.add(digitButts[i]);
+        }
+
+        digitsPanel.add(digitButts[0]);
+
+        add(digitsPanel, BorderLayout.CENTER);
     }
 
     /**
      * Create the buttons with operation
      */
     public void makeOperatorButtons() {
-        plus = new JButton("+");
-        minus = new JButton("-");
-        multiply = new JButton("*");
-        divide = new JButton("/");
-        mod = new JButton("%");
-        equal = new JButton("=");
+        JPanel basic = new JPanel(new GridLayout(5, 1));
+        JPanel advanced = new JPanel(new GridLayout(15, 1));
 
-        sinCos = new JButton("SIN/cos");
-        tanCot = new JButton("TAN/cot");
-        exp = new JButton("exp");
-        log = new JButton("log");
-        pi = new JButton("Pi");
-        e = new JButton("e");
+        operatorButts = new JButton[15];
+
+        for(int i = 0; i < Operator.values().length; i++) {
+            operatorButts[i] = new JButton(Operator.values()[i].toString());
+            if(i < 5)
+                basic.add(operatorButts[i]);
+//            advanced.add(operatorButts[i]);
+        }
+
+
         shift = new JButton("Shift");
+        advanced.add(shift);
 
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Basic", basic);
+        tabbedPane.addTab("Advanced", advanced);
 
+        add(tabbedPane, BorderLayout.EAST);
 
-        plus.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                operator = Operator.PLUS;
-                screen.append(" + ");
-            }
-        });
-
-        minus.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                operator = Operator.MINUS;
-                screen.append(" - ");
-            }
-        });
-
-        multiply.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                operator = Operator.MULTIPLY;
-                screen.append(" * ");
-            }
-        });
-
-        divide.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                operator = Operator.DIVIDE;
-                screen.append(" / ");
-            }
-        });
-
-        mod.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                operator = Operator.MOD;
-                screen.append(" % ");
-            }
-        });
-
-//        sinCos.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                setResult();
-//                if(isShiftOn)
-//                    operator = Operator.COS;
-//                else
-//                    operator = Operator.SIN;
-//                setResult();
-//
-//            }
-//        });
-//
-//        tanCot.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//
-//            }
-//        });
-
-        equal.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setResult();
-                screen.append(" = " + result);
-            }
-        });
-
-
+        equal = new JButton(" = ");
+        Dimension size = equal.getPreferredSize();
+        size.height += 10;
+        equal.setPreferredSize(size);
+        add(equal, BorderLayout.SOUTH);
 
     }
 
@@ -260,73 +150,120 @@ public class Calculator extends JFrame {
         menu.add(exit);
     }
 
-    /**
-     * Apply the operation on the entered numbers
-     */
-    public void setResult() {
-        switch(operator) {
-            case PLUS:
-                result = first + second;
-                break;
-            case MINUS:
-                result = first - second;
-                break;
-            case MULTIPLY:
-                result = first * second;
-                break;
-            case DIVIDE:
-                result = first / second;
-                break;
-            case MOD:
-                result = first % second;
-                break;
+    private class Model {
+        private double first, second, result;
 
-            default:
-                result = first;
+        private Operator operator;
+
+        /**
+         * Apply the operation on the entered numbers
+         */
+        public void setResult() {
+            switch(operator) {
+                case ADD:
+                    result = first + second;
+                    break;
+                case SUBTRACT:
+                    result = first - second;
+                    break;
+                case MULTIPLY:
+                    result = first * second;
+                    break;
+                case DIVIDE:
+                    result = first / second;
+                    break;
+                case MOD:
+                    result = first % second;
+                    break;
+            }
+        }
+
+
+        public double getFirst() {
+            return first;
+        }
+
+        public double getSecond() {
+            return second;
+        }
+
+        public Operator getOperator() {
+            return operator;
+        }
+
+        public double getResult() {
+            setResult();
+            first = result;
+            return result;
+        }
+
+        public boolean hasOperator() {
+            return operator != null;
+        }
+
+        public void setOperator(Operator operator) {
+            this.operator = operator;
+            second = 0;
+        }
+
+        public void appendFirst(int digit) {
+            first = first * 10 + digit;
+        }
+
+        public void appendSecond(int digit) {
+            second = second * 10 + digit;
         }
     }
 
-    /**
-     * Create an ActionListener that listens to a specific digit
-     * @param digit the digit to be pressed
-     * @return the ActionListener
-     */
-    public ActionListener digitListener(int digit) {
-        ActionListener listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pressDigit(digit);
+    private class Listener implements ActionListener, KeyListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JButton butt = (JButton)e.getSource();
+
+            if(butt.equals(equal)) {
+                screen.setText(model.getResult() + "");
+                return;
             }
-        };
-        return listener;
-    }
 
-    /**
-     * Change the screen and the numbers according to the given digit
-     * @param digit the given digit
-     */
-    public void pressDigit(int digit) {
-        screen.append("" + digit);
-        if(operator == null)
-            first = first * 10 + digit;
-        else
-            second = second * 10 + digit;
-    }
+            for(int i = 0; i < 10; i++) {
+                if(butt.equals(digitButts[i])) {
+                    if(model.hasOperator()) {
+                        model.appendSecond(i);
+                        screen.setText(model.getFirst() + model.getOperator().toString() + model.getSecond());
+                    }
+                    else {
+                        model.appendFirst(i);
+                        screen.setText(model.getFirst() + "");
+                    }
+                    return;
+                }
+            }
 
-    /**
-     * Make a tabbed pain and add the calculators to it
-     */
-    public void makeTabbedPane() {
-        JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.add(basic, "Basic");
-        tabbedPane.add(advanced, "Advanced");
-        tabbedPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        Dimension size = tabbedPane.getPreferredSize();
-        size.height += 200;
-        tabbedPane.setPreferredSize(size);
+            for(int i = 0; i < Operator.values().length; i++) {
+                if (butt.equals(operatorButts[i])) {
+                    Operator op = Operator.values()[i];
+                    model.setOperator(op);
+                    screen.setText(model.getFirst() + op.toString());
+                    return;
+                }
+            }
+        }
 
+        @Override
+        public void keyTyped(KeyEvent e) {
 
-        add(tabbedPane, BorderLayout.CENTER);
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
+        }
     }
 
     public static void main(String[] args) {
