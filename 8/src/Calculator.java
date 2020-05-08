@@ -38,13 +38,22 @@ public class Calculator extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Build different components of the frame
+     */
     public void build() {
         model = new Model();
         makeScreen();
         makeDigitButtons();
         makeOperatorButtons();
+        makeMenubar();
     }
 
+    /**
+     * Set the ActionListener to each component and the KeyListener to the frame
+     * @param actionListener the ActionListener to be added
+     * @param keyListener the KeyListener to be added
+     */
     public void setListener(ActionListener actionListener, KeyListener keyListener) {
         for(int i = 0; i < 10; i++)
             digitButts[i].addActionListener(actionListener);
@@ -76,7 +85,7 @@ public class Calculator extends JFrame {
     }
 
     /**
-     * Creat the buttons with digits
+     * Creat the buttons with digits and add the to the digitPanel
      */
     public void makeDigitButtons() {
         digitButts = new JButton[10];
@@ -95,7 +104,8 @@ public class Calculator extends JFrame {
     }
 
     /**
-     * Create the buttons with operation
+     * Create the operation buttons and add the to their panel, then add the panels
+     * to the tabbedPane
      */
     public void makeOperatorButtons() {
         JPanel basic = new JPanel(new GridLayout(5, 1));
@@ -130,7 +140,7 @@ public class Calculator extends JFrame {
     }
 
     /**
-     * Adds a Menubar to this frame
+     * Add a Menubar to this frame
      */
     public void makeMenubar() {
         JMenuBar menuBar = new JMenuBar();
@@ -149,6 +159,9 @@ public class Calculator extends JFrame {
         menu.add(exit);
     }
 
+    /**
+     * The actual calculator class that does the main work
+     */
     private class Model {
         private double first, second, result;
 
@@ -193,47 +206,82 @@ public class Calculator extends JFrame {
             }
         }
 
-
+        /**
+         * @return the first number
+         */
         public double getFirst() {
             return first;
         }
 
+        /**
+         * @return the second number
+         */
         public double getSecond() {
             return second;
         }
 
+        /**
+         * @return the operator
+         */
         public Operator getOperator() {
             return operator;
         }
 
+        /**
+         * Set then get the result
+         * @return the result of the operation
+         */
         public double getResult() {
             setResult();
             first = result;
             return result;
         }
 
+        /**
+         * @return true if the operator has been set
+         */
         public boolean hasOperator() {
             return operator != null;
         }
 
+        /**
+         * Set the operator and set second number to zero
+         * @param operator the new Operator to ne set
+         */
         public void setOperator(Operator operator) {
             if(operator.isSingleInput())
                 getResult();
-            this.operator = operator;
+            else
+                this.operator = operator;
             second = 0;
         }
 
+        /**
+         * Append the given digit to the end of the first number
+         * @param digit the digit to be appended
+         */
         public void appendFirst(int digit) {
             first = first * 10 + digit;
         }
 
+        /**
+         * Append the given digit to the end of the first number
+         * @param digit the digit to be appended
+         */
         public void appendSecond(int digit) {
             second = second * 10 + digit;
         }
     }
 
+    /**
+     * The listener class to add to the inteface
+     */
     private class Listener implements ActionListener, KeyListener {
 
+        /**
+         * Press the given digit's button
+         * @param i the given digit
+         */
         public void digit(int i) {
             if(model.hasOperator()) {
                 model.appendSecond(i);
@@ -245,10 +293,17 @@ public class Calculator extends JFrame {
             }
         }
 
+        /**
+         * Press the equal button
+         */
         public void equal() {
             screen.setText(model.getResult() + "");
         }
 
+        /**
+         * Press the i-th operator button
+         * @param i the index of the operator
+         */
         public void operator(int i) {
             Operator op = Operator.values()[i];
             model.setOperator(op);
@@ -258,6 +313,10 @@ public class Calculator extends JFrame {
                 screen.setText(model.getFirst() + op.toString());
         }
 
+        /**
+         * The action to be performed
+         * @param e the ActionEvent
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton butt = (JButton)e.getSource();
@@ -284,9 +343,12 @@ public class Calculator extends JFrame {
 
         @Override
         public void keyTyped(KeyEvent e) {
-
         }
 
+        /**
+         * The action to be performed based on the pressed key
+         * @param e the KeyEvent
+         */
         @Override
         public void keyPressed(KeyEvent e) {
             int code = e.getKeyCode();
@@ -318,12 +380,8 @@ public class Calculator extends JFrame {
 
         @Override
         public void keyReleased(KeyEvent e) {
-
         }
     }
 
-    public static void main(String[] args) {
-        new Calculator();
-    }
 
 }
