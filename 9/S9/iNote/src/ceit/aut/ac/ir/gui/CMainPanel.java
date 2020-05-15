@@ -1,6 +1,5 @@
 package ceit.aut.ac.ir.gui;
 
-import ceit.aut.ac.ir.model.Note;
 import ceit.aut.ac.ir.utils.FileUtils;
 
 import javax.swing.*;
@@ -8,7 +7,8 @@ import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 
 public class CMainPanel extends JPanel {
@@ -69,9 +69,8 @@ public class CMainPanel extends JPanel {
         JTextArea textPanel = (JTextArea) tabbedPane.getSelectedComponent();
         String note = textPanel.getText();
         if (!note.isEmpty()) {
-//            FileUtils.fileWriter(note);
+            FileUtils.fileWriter(note);
 //            FileUtils.fileOutputStream(note);
-            FileUtils.saveNote(note);
         }
         updateListGUI();
     }
@@ -84,9 +83,8 @@ public class CMainPanel extends JPanel {
             JTextArea textPanel = (JTextArea)component;
             String note = textPanel.getText();
             if (!note.isEmpty()) {
-//                FileUtils.fileWriter(note);
+                FileUtils.fileWriter(note);
 //                FileUtils.fileOutputStream(note);
-                FileUtils.saveNote(note);
             }
         }
     }
@@ -113,10 +111,12 @@ public class CMainPanel extends JPanel {
                 //TODO: Phase1: Click on file is handled... Just load content into JTextArea
                 File[] curr = FileUtils.getFilesInDirectory();
                 String content = null;
-//                content = FileUtils.fileReader(curr[index]);
-//                content = FileUtils.fileInputStream(curr[index]);
-                content = FileUtils.readNote(curr[index]).getContent();
-
+                try {
+//                    content = FileUtils.fileReader(curr[index]);
+                    content = FileUtils.fileInputStream(curr[index]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 openExistingNote(content);
             }
         }
@@ -129,8 +129,7 @@ public class CMainPanel extends JPanel {
         public Component getListCellRendererComponent(JList list, Object object, int index, boolean isSelected, boolean cellHasFocus) {
             if (object instanceof File) {
                 File file = (File) object;
-                Note note = FileUtils.readNote(file);
-                setText(note.getTitle() + " (" + note.getDate() + ")");
+                setText(file.getName());
                 setIcon(FileSystemView.getFileSystemView().getSystemIcon(file));
                 if (isSelected) {
                     setBackground(list.getSelectionBackground());

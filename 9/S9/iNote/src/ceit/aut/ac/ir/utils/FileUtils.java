@@ -1,13 +1,11 @@
 package ceit.aut.ac.ir.utils;
 
-import ceit.aut.ac.ir.model.Note;
-
+import java.awt.*;
 import java.io.*;
-import java.util.*;
 
 public class FileUtils {
 
-    private static final String NOTES_PATH = "./notes2/";
+    private static final String NOTES_PATH = "./notes/";
 
     //It's a static initializer. It's executed when the class is loaded.
     //It's similar to constructor
@@ -80,58 +78,8 @@ public class FileUtils {
     }
 
     //TODO: Phase2: proper methods for handling serialization
-    public static Note[] getNotesInDirectory() {
-        File[] files = getFilesInDirectory();
-        Note[] notes = new Note[files.length];
-        int i = 0;
-        for(File file: files) {
-            try(FileInputStream fis = new FileInputStream(file)) {
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                notes[i++] = (Note)ois.readObject();
-                ois.close();
-            }
-            catch(IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return notes;
-    }
-
-    public static void saveNote(String content) {
-        Note note = new Note(getTitle(content), content, new Date().toString());
-
-        File file = new File(getProperFileName(content));
-
-        try(FileOutputStream fos = new FileOutputStream(file);
-            ObjectOutputStream oos = new ObjectOutputStream(fos)){
-            oos.writeObject(note);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Note readNote(File file) {
-        try(FileInputStream fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis)) {
-            Note note = (Note)ois.readObject();
-            return note;
-        }
-        catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-
-
 
     private static String getProperFileName(String content) {
-        return NOTES_PATH + getTitle(content) + ".txt";
-    }
-
-    private static String getTitle(String content) {
         String name = "";
         int loc = content.indexOf("\n");
         if (loc != -1) {
@@ -141,7 +89,7 @@ public class FileUtils {
             name = content;
         }
         else
-            name = System.currentTimeMillis() + "_new file";
-        return name;
+            name = System.currentTimeMillis() + "_new file"; // removed the .txt
+        return "./notes/" + name + ".txt";
     }
 }
