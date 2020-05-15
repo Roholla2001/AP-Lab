@@ -70,6 +70,7 @@ public class CMainPanel extends JPanel {
         String note = textPanel.getText();
         if (!note.isEmpty()) {
             FileUtils.fileWriter(note);
+//            FileUtils.fileOutputStream(note);
         }
         updateListGUI();
     }
@@ -83,6 +84,7 @@ public class CMainPanel extends JPanel {
             String note = textPanel.getText();
             if (!note.isEmpty()) {
                 FileUtils.fileWriter(note);
+//                FileUtils.fileOutputStream(note);
             }
         }
     }
@@ -110,7 +112,8 @@ public class CMainPanel extends JPanel {
                 File[] curr = FileUtils.getFilesInDirectory();
                 String content = null;
                 try {
-                    content = FileUtils.fileReader(curr[index]);
+//                    content = FileUtils.fileReader(curr[index]);
+                    content = FileUtils.fileInputStream(curr[index]);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

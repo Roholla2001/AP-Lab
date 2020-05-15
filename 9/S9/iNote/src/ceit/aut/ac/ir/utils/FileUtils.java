@@ -1,5 +1,6 @@
 package ceit.aut.ac.ir.utils;
 
+import java.awt.*;
 import java.io.*;
 
 public class FileUtils {
@@ -34,7 +35,7 @@ public class FileUtils {
 
     public static void fileWriter(String content) {
         //TODO: write content on file
-        String fileName = "./notes/" + getProperFileName(content) + ".txt"; // added the ./notes/ & .txt
+        String fileName = getProperFileName(content);
 
         // DO
         File file = new File(fileName);
@@ -49,18 +50,46 @@ public class FileUtils {
     }
 
     //TODO: Phase1: define method here for reading file with InputStream
+    public static String fileInputStream(File file) throws IOException {
+        FileInputStream fos = new FileInputStream(file);
+        BufferedInputStream bos = new BufferedInputStream(fos);
+
+        String text = "";
+        while(bos.available() > 0)
+            text += (char)bos.read();
+
+        bos.close();
+        fos.close();
+        return text;
+    }
+
     //TODO: Phase1: define method here for writing file with OutputStream
+    public static void fileOutputStream(String content) {
+        String fileName = getProperFileName(content);
+
+        File file = new File(fileName);
+
+        try (FileOutputStream fos = new FileOutputStream(file); BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+            byte[] toByteArr = content.getBytes();
+            bos.write(toByteArr);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     //TODO: Phase2: proper methods for handling serialization
 
     private static String getProperFileName(String content) {
+        String name = "";
         int loc = content.indexOf("\n");
         if (loc != -1) {
-            return content.substring(0, loc);
+            name = content.substring(0, loc);
         }
-        if (!content.isEmpty()) {
-            return content;
+        else if (!content.isEmpty()) {
+            name = content;
         }
-        return System.currentTimeMillis() + "_new file"; // removed the .txt
+        else
+            name = System.currentTimeMillis() + "_new file"; // removed the .txt
+        return "./notes/" + name + ".txt";
     }
 }
