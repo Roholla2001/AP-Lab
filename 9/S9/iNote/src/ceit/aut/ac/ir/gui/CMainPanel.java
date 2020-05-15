@@ -74,6 +74,19 @@ public class CMainPanel extends JPanel {
         updateListGUI();
     }
 
+    /**
+     * Save all the notes
+     */
+    public void saveAll() {
+        for(Component component: tabbedPane.getComponents()) {
+            JTextArea textPanel = (JTextArea)component;
+            String note = textPanel.getText();
+            if (!note.isEmpty()) {
+                FileUtils.fileWriter(note);
+            }
+        }
+    }
+
     private JTextArea createTextPanel() {
         JTextArea textPanel = new JTextArea();
         textPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));

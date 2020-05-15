@@ -21,11 +21,13 @@ public class FileUtils {
     public static String fileReader(File file) throws IOException {
         //TODO: Phase1: read content from file
         FileReader fileReader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
         String text = "";
-        while(fileReader.ready())
-            text += (char)fileReader.read();
+        while(bufferedReader.ready())
+            text += (char)bufferedReader.read();
 
         fileReader.close();
+        bufferedReader.close();
         return text;
         // done
     }
@@ -37,8 +39,8 @@ public class FileUtils {
         // DO
         File file = new File(fileName);
 
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            fileWriter.write(content);
+        try (FileWriter fileWriter = new FileWriter(file); BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+            bufferedWriter.write(content);
         } catch(IOException e) {
             e.printStackTrace();
         }
