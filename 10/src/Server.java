@@ -1,43 +1,36 @@
-import java.io.*;
+import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
-
-public class Server implements Runnable {
-    private String string;
-
-    public Server() {
-        string = "";
-    }
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.CheckedOutputStream;
 
 
-    @Override
-    public void run() {
-        try(ServerSocket server = new ServerSocket(7657)) {
-            System.out.println("Server started, waiting for a client...");
-            try(Socket connection = server.accept()) {
-                DataInputStream inFromClient = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
-                DataOutputStream outToClient = new DataOutputStream(connection.getOutputStream());
+public class Server {
 
-                String string = "";
-                String line = "";
-                while(!line.equals("over")) {
-                    if(!line.isEmpty())
-                        string += "- " + line+ "\n";
-                    System.out.println("Recieved: " + line);
-                    line = inFromClient.readLine();
-                }
-                outToClient.write(("Got the words. here:\n" + string).getBytes());
 
+
+
+    public static void main(String[] args) {
+        final int MAX = 3;
+        int count = 0;
+        ExecutorService executor = Executors.newCachedThreadPool();
+
+
+        try(ServerSocket server = new ServerSocket(7463)) {
+
+            while(count < MAX) {
+                System.out.println("Main: looking for a client...");
+                executor.execute(new Handler(server.accept(), "handler" + count));
+                System.out.println("Main: Client accepted.");
+                count++;
             }
-            catch(IOException e) {
-                System.err.println(e);
-            }
-            System.out.println("\nClosing server.");
+            executor.awaitTermination(1, TimeUnit.MINUTES);
         }
-        catch(IOException e) {
+        catch(IOException | InterruptedException e) {
             System.err.println(e);
         }
+
     }
 }
